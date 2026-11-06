@@ -1,0 +1,579 @@
+<!doctype html>
+<html lang="tr" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title id="sayfa-basligi">TulparEdit — Ücretsiz, Türkçe video düzenleyici</title>
+<meta name="description" id="sayfa-aciklamasi" content="TulparEdit: ücretsiz, Türkçe ve yapay zekâ destekli Windows video düzenleme programı. Konudan Video, otomatik altyazı, Shorts / Reels, YouTube'a yükleme.">
+<meta property="og:title" content="TulparEdit — Video Düzenleyici">
+<meta property="og:description" content="Bir konu yaz, yapay zekâ senaryoyu yazsın, görüntüleri bulsun, seslendirsin. Kes, birleştir, altyazı ekle — hepsi ücretsiz.">
+<meta property="og:image" content="https://hakkiodbs.github.io/TulparEdit/gorseller/afis.png">
+<meta name="theme-color" content="#05070b">
+<link rel="icon" href="gorseller/simge.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --zemin:#05070b; --kart:#0d1424; --kart2:#111a2e; --kenar:#1f2b44; --kenar2:#2b3a5c;
+  --mavi:#3b82f6; --mavi-a:#60a5fa; --mavi-k:#1d4ed8; --kirmizi:#ef4444; --kirmizi-k:#b91c1c;
+  --beyaz:#f5f7fa; --gri:#9aa4b2; --gri2:#6b7689;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;overflow-x:hidden}
+body{background:var(--zemin);color:var(--beyaz);font-family:"Outfit",system-ui,"Segoe UI",sans-serif;line-height:1.55;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img,video{max-width:100%;display:block}
+.isik{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+   radial-gradient(600px 500px at 8% 8%,rgba(37,99,235,.38),transparent 70%),
+   radial-gradient(520px 520px at 100% 30%,rgba(220,38,38,.20),transparent 70%),
+   radial-gradient(700px 500px at 60% 110%,rgba(29,78,216,.30),transparent 70%),
+   radial-gradient(400px 400px at 0% 95%,rgba(185,28,28,.14),transparent 70%);}
+.izgara{position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.05;
+  background-image:linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px);background-size:48px 48px;
+  mask-image:radial-gradient(ellipse at 50% 30%,#000 30%,transparent 75%)}
+.kap{position:relative;z-index:1;max-width:1140px;margin:0 auto;padding:0 20px}
+
+/* RTL Uyumluluğu */
+[dir="rtl"]{text-align:right}
+[dir="rtl"] .yazar .imlec{margin-left:0;margin-right:3px}
+[dir="rtl"] .indir ol{text-align:right;padding-left:0;padding-right:24px}
+[dir="rtl"] details{text-align:right}
+[dir="rtl"] .adim{text-align:right}
+[dir="rtl"] .dil-menu{right:auto;left:0}
+
+/* üst menü */
+nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(5,7,11,.72);border-bottom:1px solid rgba(43,58,92,.5)}
+nav .kap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.marka{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px}
+.marka img{width:30px;height:30px;border-radius:8px}
+.marka b{color:var(--mavi-a)}
+.menu{display:flex;gap:20px;font-size:15px;color:var(--gri);font-weight:500;align-items:center}
+.menu a:hover{color:var(--beyaz)}
+.menu .ind{color:#fff;background:linear-gradient(180deg,#5b9bff,var(--mavi) 50%,var(--mavi-k));padding:8px 16px;border-radius:12px;font-weight:700;box-shadow:0 6px 22px rgba(59,130,246,.35)}
+
+/* dil seçici */
+.dil-kutu{position:relative}
+.dil-btn{cursor:pointer;color:var(--beyaz);border:1px solid var(--kenar2);background:rgba(13,20,36,.85);padding:7px 12px;border-radius:12px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:.2s;font-family:inherit}
+.dil-btn:hover{border-color:var(--mavi-a);background:rgba(59,130,246,.15)}
+.dil-btn svg{transition:.2s}
+.dil-kutu.acik .dil-btn svg{transform:rotate(180deg)}
+.dil-menu{position:absolute;top:calc(100% + 8px);right:0;background:#0d1424;border:1px solid var(--kenar2);border-radius:14px;padding:6px;min-width:160px;box-shadow:0 18px 40px rgba(0,0,0,.65),0 0 0 1px rgba(96,165,250,.18);display:none;z-index:100;backdrop-filter:blur(16px);max-height:380px;overflow-y:auto}
+.dil-menu.acik{display:block;animation:belirMenu .18s ease-out}
+@keyframes belirMenu{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.dil-secenek{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:8px;font-size:13px;font-weight:600;color:var(--gri);cursor:pointer;transition:.15s;border:0;background:none;width:100%;text-align:left;font-family:inherit}
+[dir="rtl"] .dil-secenek{text-align:right}
+.dil-secenek:hover{color:var(--beyaz);background:rgba(59,130,246,.18)}
+.dil-secenek.aktif{color:var(--mavi-a);background:rgba(59,130,246,.12);font-weight:700}
+.dil-secenek .bayrak{font-size:16px;line-height:1}
+
+@media(max-width:820px){.menu a:not(.ind){display:none}}
+
+/* giriş */
+.giris{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding:72px 0 40px}
+.rozet{display:inline-flex;align-items:center;gap:10px;font-size:14px;font-weight:600;color:var(--mavi-a);
+  border:1px solid var(--kenar2);background:rgba(13,20,36,.7);padding:6px 14px;border-radius:999px}
+.rozet .nokta{width:8px;height:8px;border-radius:50%;background:var(--kirmizi);box-shadow:0 0 10px var(--kirmizi)}
+.rozet .yeni{color:#fca5a5}
+h1{font-size:clamp(40px,5.6vw,70px);line-height:1.04;font-weight:900;letter-spacing:-1.5px;margin:22px 0 18px}
+.gr{background:linear-gradient(90deg,#60a5fa,#3b82f6 45%,#93c5fd);-webkit-background-clip:text;background-clip:text;color:transparent}
+.gr-k{background:linear-gradient(90deg,#f87171,#ef4444);-webkit-background-clip:text;background-clip:text;color:transparent}
+.yazar{font-size:20px;font-weight:600;margin-bottom:14px;min-height:30px}
+.yazar span{color:var(--mavi-a)}
+.yazar .imlec{display:inline-block;width:2px;height:22px;background:var(--mavi-a);vertical-align:-3px;margin-left:3px;animation:yanip .9s steps(1) infinite}
+@keyframes yanip{50%{opacity:0}}
+.alt{color:var(--gri);font-size:17px;max-width:540px}
+.dugmeler{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.d{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:16px;padding:13px 22px;border-radius:14px;
+  border:1px solid var(--kenar2);background:rgba(13,20,36,.8);transition:.2s}
+.d:hover{border-color:var(--mavi-a);transform:translateY(-2px)}
+.d.ana{border:0;background:linear-gradient(180deg,#5b9bff,var(--mavi) 50%,var(--mavi-k));box-shadow:0 10px 30px rgba(59,130,246,.4)}
+.d.kir{border:0;background:linear-gradient(180deg,#f87171,var(--kirmizi) 50%,var(--kirmizi-k));box-shadow:0 10px 30px rgba(239,68,68,.35)}
+.d small{font-weight:500;opacity:.85;font-size:13px}
+.not{margin-top:14px;font-size:13px;color:var(--gri2)}
+.halka{position:relative;aspect-ratio:1;max-width:440px;margin:0 auto;width:100%}
+.halka::before{content:"";position:absolute;inset:0;border-radius:50%;border:2px dashed rgba(96,165,250,.35);animation:don 40s linear infinite}
+.halka::after{content:"";position:absolute;inset:7%;border-radius:50%;border:2px solid rgba(59,130,246,.55);
+  box-shadow:0 0 60px rgba(59,130,246,.35),inset 0 0 60px rgba(59,130,246,.25);background:radial-gradient(circle at 50% 45%,#0f1d3a,#070b14 70%)}
+.halka img{position:absolute;z-index:2;left:6%;top:24%;width:88%;filter:drop-shadow(0 0 26px rgba(96,165,250,.6));animation:uc 6s ease-in-out infinite}
+.halka .kirmizi-isik{position:absolute;z-index:1;right:8%;top:10%;width:14px;height:14px;border-radius:50%;background:var(--kirmizi);box-shadow:0 0 18px var(--kirmizi)}
+@keyframes don{to{transform:rotate(360deg)}}
+@keyframes uc{50%{transform:translateY(-12px)}}
+@media(max-width:900px){.giris{grid-template-columns:1fr;padding-top:44px}.halka{max-width:320px;order:-1}}
+
+/* kayan etiketler */
+.serit{border-top:1px solid rgba(43,58,92,.5);border-bottom:1px solid rgba(43,58,92,.5);overflow:hidden;padding:14px 0;margin:20px 0 10px;
+  mask-image:linear-gradient(90deg,transparent,#000 10%,#000 90%,transparent)}
+.serit .ic{display:flex;gap:12px;width:max-content;animation:kay 40s linear infinite}
+.etk{white-space:nowrap;font-weight:600;font-size:14px;padding:7px 15px;border-radius:999px;border:1px solid var(--kenar2);background:rgba(13,20,36,.8)}
+.etk.k{border-color:rgba(239,68,68,.5);color:#fecaca}
+@keyframes kay{to{transform:translateX(-50%)}}
+
+/* sayılar */
+.sayilar{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:34px 0}
+.say{background:linear-gradient(180deg,rgba(17,26,46,.9),rgba(13,20,36,.9));border:1px solid var(--kenar);border-radius:16px;padding:20px}
+.say b{display:block;font-size:26px;font-weight:900;color:var(--mavi-a);line-height:1.15}
+.say span{color:var(--gri);font-size:14px}
+@media(max-width:760px){.sayilar{grid-template-columns:repeat(2,1fr)}}
+
+section{padding:46px 0}
+h2{font-size:clamp(28px,4vw,40px);font-weight:800;letter-spacing:-.5px;display:flex;align-items:center;gap:12px}
+h2 .n{width:12px;height:12px;border-radius:50%;background:var(--kirmizi);box-shadow:0 0 12px var(--kirmizi)}
+.bas-alt{color:var(--gri);margin:6px 0 26px;font-size:17px}
+
+/* video */
+.video{border-radius:20px;overflow:hidden;border:1px solid var(--kenar2);box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 0 1px rgba(96,165,250,.15),0 0 60px rgba(59,130,246,.18)}
+.video video{width:100%;aspect-ratio:16/9;background:#000}
+
+/* özellikler */
+.izgara3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media(max-width:900px){.izgara3{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:580px){.izgara3{grid-template-columns:1fr}}
+.oz{background:linear-gradient(180deg,rgba(17,26,46,.92),rgba(11,17,31,.92));border:1px solid var(--kenar);border-radius:18px;padding:22px;transition:.25s}
+.oz:hover{border-color:var(--mavi);transform:translateY(-3px);box-shadow:0 14px 40px rgba(59,130,246,.15)}
+.oz .s{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:22px;margin-bottom:14px;
+  background:linear-gradient(180deg,rgba(59,130,246,.35),rgba(29,78,216,.15));border:1px solid rgba(96,165,250,.4)}
+.oz.y .s{background:linear-gradient(180deg,rgba(239,68,68,.35),rgba(185,28,28,.15));border-color:rgba(248,113,113,.5)}
+.oz h3{font-size:19px;font-weight:700;margin-bottom:6px}
+.oz p{color:var(--gri);font-size:15px}
+.oz .yeni{font-size:11px;font-weight:800;color:#fff;background:var(--kirmizi);border-radius:6px;padding:2px 7px;margin-left:8px;vertical-align:3px}
+[dir="rtl"] .oz .yeni{margin-left:0;margin-right:8px}
+
+/* konudan video */
+.iki{display:grid;grid-template-columns:1fr 1fr;gap:30px;align-items:center}
+@media(max-width:900px){.iki{grid-template-columns:1fr}}
+.adim{display:flex;gap:14px;align-items:flex-start;background:rgba(13,20,36,.85);border:1px solid var(--kenar);border-radius:16px;padding:16px 18px;margin-bottom:12px}
+.adim .no{flex:none;width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-weight:800;
+  background:linear-gradient(180deg,#5b9bff,var(--mavi-k));box-shadow:0 6px 18px rgba(59,130,246,.35)}
+.adim b{display:block;font-size:17px}
+.adim span{color:var(--gri);font-size:14px}
+.cerceve{border-radius:18px;overflow:hidden;border:1px solid var(--kenar2);box-shadow:0 24px 70px rgba(0,0,0,.6),0 0 50px rgba(59,130,246,.15)}
+
+/* ekran görüntüleri */
+.sekmeler{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.sekme{cursor:pointer;font:inherit;font-weight:600;font-size:14px;color:var(--gri);padding:8px 16px;border-radius:999px;border:1px solid var(--kenar2);background:rgba(13,20,36,.8)}
+.sekme.acik{color:#fff;border-color:transparent;background:linear-gradient(180deg,#5b9bff,var(--mavi) 50%,var(--mavi-k))}
+.goster img{width:100%;border-radius:18px;border:1px solid var(--kenar2);box-shadow:0 24px 70px rgba(0,0,0,.6)}
+.goster p{color:var(--gri);text-align:center;margin-top:12px}
+
+/* indir */
+.indir{background:linear-gradient(135deg,rgba(29,78,216,.35),rgba(13,20,36,.9) 50%,rgba(185,28,28,.25));border:1px solid var(--kenar2);border-radius:24px;padding:36px;text-align:center}
+.indir h2{justify-content:center}
+.indir ol{text-align:left;max-width:560px;margin:22px auto 0;color:var(--gri);padding-left:24px}
+.indir ol li{margin:6px 0}
+.indir ol b{color:var(--beyaz)}
+details{background:rgba(13,20,36,.85);border:1px solid var(--kenar);border-radius:14px;padding:14px 18px;margin-bottom:10px}
+summary{cursor:pointer;font-weight:700;font-size:17px}
+details p{color:var(--gri);margin-top:8px}
+footer{border-top:1px solid rgba(43,58,92,.5);margin-top:40px;padding:28px 0;color:var(--gri2);font-size:14px}
+footer .kap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+footer a{color:var(--mavi-a)}
+.belir{opacity:0;transform:translateY(18px);transition:.7s}
+.belir.gor{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.belir{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="isik"></div><div class="izgara"></div>
+
+<nav><div class="kap">
+  <a class="marka" href="#"><img src="gorseller/simge.png" alt="TulparEdit"><span>Tulpar<b>Edit</b></span></a>
+  <div class="menu">
+    <a href="#ozellikler" id="nav-ozellikler">Özellikler</a>
+    <a href="#konudan" id="nav-konudan">Konudan Video</a>
+    <a href="#ekranlar" id="nav-ekranlar">Ekranlar</a>
+    <a href="https://github.com/hakkiodbs/TulparEdit">GitHub</a>
+    <a class="ind" href="#indir" id="nav-indir">İndir</a>
+
+    <!-- Çok Dilli Menü -->
+    <div class="dil-kutu" id="dil-kutu">
+      <button class="dil-btn" id="dil-btn" type="button" aria-label="Dili Değiştir / Select Language">
+        <span id="dil-bayrak">🇹🇷</span>
+        <span id="dil-kod">TR</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>
+      </button>
+      <div class="dil-menu" id="dil-menu" role="menu"></div>
+    </div>
+  </div>
+</div></nav>
+
+<main class="kap">
+  <header class="giris">
+    <div>
+      <span class="rozet" id="rozet-kutu"><span class="nokta"></span><span id="rozet-metin">Sürüm 1.3 · <span class="yeni">Yeni: Konudan Video</span></span></span>
+      <h1 id="hero-baslik">Videolarını <span class="gr">yapay zekâyla</span>, <span class="gr-k">hızlıca</span> düzenle.</h1>
+      <div class="yazar"><span id="yazar-on">TulparEdit ile </span><span id="yaz"></span><span class="imlec"></span></div>
+      <p class="alt" id="hero-aciklama">Ücretsiz Windows video düzenleme programı. Kes, birleştir, altyazı ekle; bir konu yaz, yapay zekâ senaryoyu yazsın, görüntüleri bulsun ve seslendirsin. Shorts, Reels ve YouTube için hazır.</p>
+      <div class="dugmeler">
+        <a class="d ana" id="btn-hero-indir" href="https://github.com/hakkiodbs/TulparEdit/releases/latest/download/TulparEdit_Kurulum.exe">Windows İçin İndir <small>Ücretsiz</small></a>
+        <a class="d kir" id="btn-hero-video" href="#video">▶ Tanıtım videosu</a>
+        <a class="d" id="btn-hero-notlar" href="https://github.com/hakkiodbs/TulparEdit/releases">Sürüm notları</a>
+      </div>
+      <p class="not" id="hero-alt-not">Windows 10 / 11 (64 bit) · Reklam yok · Abonelik yok · Hesap gerekmez</p>
+    </div>
+    <div class="halka"><span class="kirmizi-isik"></span><img src="gorseller/tulpar.png" alt="Tulpar"></div>
+  </header>
+
+  <div class="serit"><div class="ic" id="serit"></div></div>
+
+  <div class="sayilar belir" id="sayilar-kutu"></div>
+
+  <section id="video" class="belir">
+    <h2><span class="n"></span><span id="video-baslik">1 dakikada TulparEdit</span></h2>
+    <p class="bas-alt" id="video-alt">Programın neler yapabildiğini kısa tanıtım videosunda izle.</p>
+    <div class="video"><video controls preload="metadata" poster="gorseller/tanitim_kapak.jpg" playsinline>
+      <source src="gorseller/tanitim.mp4" type="video/mp4"></video></div>
+  </section>
+
+  <section id="ozellikler" class="belir">
+    <h2><span class="n"></span><span id="ozellikler-baslik">Neler yapabilir?</span></h2>
+    <p class="bas-alt" id="ozellikler-alt">Bir video düzenleyicide ihtiyacın olan her şey, sade ve hızlı.</p>
+    <div class="izgara3" id="ozellikler-izgara"></div>
+  </section>
+
+  <section id="konudan" class="belir">
+    <h2><span class="n"></span><span id="konudan-baslik">Konudan Video nasıl çalışır?</span></h2>
+    <p class="bas-alt" id="konudan-alt">Fikirden düzenlenebilir projeye dört adım.</p>
+    <div class="iki">
+      <div id="konudan-adimlar"></div>
+      <div class="cerceve"><img src="gorseller/ekran_senaryolar.jpg" alt="Konudan Video senaryo seçimi" loading="lazy"></div>
+    </div>
+  </section>
+
+  <section id="ekranlar" class="belir">
+    <h2><span class="n"></span><span id="ekranlar-baslik">Ekran görüntüleri</span></h2>
+    <p class="bas-alt" id="ekranlar-alt">Yeni tasarım: koyu, sade ve akıcı.</p>
+    <div class="sekmeler" id="sekmeler"></div>
+    <div class="goster"><img id="ekran" src="gorseller/ekran_ana.jpg" alt=""><p id="ekran-yazi"></p></div>
+  </section>
+
+  <section id="indir" class="belir">
+    <div class="indir">
+      <h2><span class="n"></span><span id="indir-baslik">Hemen ücretsiz indir</span></h2>
+      <p class="bas-alt" style="margin-bottom:22px" id="indir-alt">Son sürüm · Windows 10 / 11 (64 bit)</p>
+      <a class="d ana" id="btn-alt-indir" style="font-size:18px;padding:16px 32px" href="https://github.com/hakkiodbs/TulparEdit/releases/latest/download/TulparEdit_Kurulum.exe">Windows İçin İndir <small>64-bit · Ücretsiz</small></a>
+      <ol id="indir-adimlar"></ol>
+    </div>
+  </section>
+
+  <section class="belir">
+    <h2><span class="n"></span><span id="sss-baslik">Sık sorulanlar</span></h2>
+    <p class="bas-alt"></p>
+    <div id="sss-kutu"></div>
+  </section>
+</main>
+
+<footer><div class="kap">
+  <span id="footer-telif">© TulparEdit · Hakkı Odabaş</span>
+  <span><a href="https://hakkiodbs.github.io/">hakkiodbs.github.io</a> · <a href="https://www.youtube.com/@Hakkiodabas">YouTube</a> · <a href="https://github.com/hakkiodbs/TulparEdit">GitHub</a></span>
+</div></footer>
+
+<!-- Çok dilli veri sözlüğü -->
+<script src="languages.js"></script>
+
+<script>
+// Global değişkenler
+let suankiDil = 'tr';
+let surumNo = '1.3';
+let seciliSekmeIdx = 0;
+let daktiloZamanlayici = null;
+let daktiloDonguAktif = false;
+
+// GitHub'dan en son sürüm numarasını çek
+fetch("https://api.github.com/repos/hakkiodbs/TulparEdit/releases/latest")
+  .then(r => r.ok ? r.json() : null)
+  .then(v => {
+    if (v && v.tag_name) {
+      surumNo = v.tag_name.replace(/^v/i, "");
+      guncelleSurumMetinleri();
+    }
+  })
+  .catch(() => {});
+
+function guncelleSurumMetinleri() {
+  const d = TULPAR_LANGUAGES[suankiDil] || TULPAR_LANGUAGES.en;
+  const rozetMetin = document.getElementById("rozet-metin");
+  if (rozetMetin) {
+    rozetMetin.innerHTML = `${d.hero.badge_ver} ${surumNo} · <span class="yeni">${d.hero.badge_new}</span>`;
+  }
+  const indirAlt = document.getElementById("indir-alt");
+  if (indirAlt) {
+    indirAlt.textContent = `${d.download.sub_prefix}${surumNo} · Windows 10 / 11 (64 bit)`;
+  }
+}
+
+// Daktilo efekti kontrolörü
+let ki = 0, hi = 0, sil = false;
+const yazEleman = document.getElementById("yaz");
+
+function baslatDaktilo(kelimeler) {
+  if (daktiloZamanlayici) clearTimeout(daktiloZamanlayici);
+  ki = 0; hi = 0; sil = false;
+  
+  function adim() {
+    if (!kelimeler || !kelimeler.length) return;
+    const k = kelimeler[ki];
+    yazEleman.textContent = k.slice(0, hi);
+    if (!sil && hi < k.length) {
+      hi++;
+      daktiloZamanlayici = setTimeout(adim, 50);
+    } else if (!sil) {
+      sil = true;
+      daktiloZamanlayici = setTimeout(adim, 1600);
+    } else if (hi > 0) {
+      hi--;
+      daktiloZamanlayici = setTimeout(adim, 25);
+    } else {
+      sil = false;
+      ki = (ki + 1) % kelimeler.length;
+      daktiloZamanlayici = setTimeout(adim, 250);
+    }
+  }
+  adim();
+}
+
+// Dili değiştir ve sayfadaki tüm içerikleri languages.js'den güncelle
+function diliAyarla(kod) {
+  if (!TULPAR_LANGUAGES[kod]) kod = 'en';
+  suankiDil = kod;
+  const d = TULPAR_LANGUAGES[kod];
+
+  // HTML dil ve yön (LTR / RTL)
+  document.documentElement.lang = kod;
+  document.documentElement.dir = d.dir || 'ltr';
+
+  // Sayfa başlığı ve açıklaması
+  document.title = d.title;
+  const metaDesc = document.getElementById("sayfa-aciklamasi");
+  if (metaDesc) metaDesc.setAttribute("content", d.desc);
+
+  // Menü bağlantıları
+  document.getElementById("nav-ozellikler").textContent = d.nav.features;
+  document.getElementById("nav-konudan").textContent = d.nav.topic;
+  document.getElementById("nav-ekranlar").textContent = d.nav.screens;
+  document.getElementById("nav-indir").textContent = d.nav.download;
+
+  // Dil seçici butonu
+  document.getElementById("dil-bayrak").textContent = d.flag;
+  document.getElementById("dil-kod").textContent = kod.toUpperCase();
+
+  // Hero bölümü
+  guncelleSurumMetinleri();
+  document.getElementById("hero-baslik").innerHTML = d.hero.title_html;
+  document.getElementById("yazar-on").textContent = d.hero.writer_prefix;
+  document.getElementById("hero-aciklama").textContent = d.hero.desc;
+  
+  // İndir butonları (OKSUZ, doğrudan temiz buton metni)
+  document.getElementById("btn-hero-indir").innerHTML = `${d.hero.btn_download} <small>${d.hero.btn_download_sub}</small>`;
+  document.getElementById("btn-hero-video").textContent = d.hero.btn_video;
+  document.getElementById("btn-hero-notlar").textContent = d.hero.btn_notes;
+  document.getElementById("hero-alt-not").textContent = d.hero.note;
+
+  // Daktilo sözcüklerini yeniden başlat
+  baslatDaktilo(d.hero.writer_words);
+
+  // Kayan şerit etiketleri
+  const serit = document.getElementById("serit");
+  serit.innerHTML = [...d.ticker, ...d.ticker].map(e => 
+    `<span class="etk${e.endsWith('*') ? ' k' : ''}">${e.replace('*', '')}</span>`
+  ).join('');
+
+  // Sayılar kartları
+  const sayilarKutu = document.getElementById("sayilar-kutu");
+  sayilarKutu.innerHTML = d.stats.map(s => 
+    `<div class="say"><b>${s.num}</b><span>${s.label}</span></div>`
+  ).join('');
+
+  // Video bölümü
+  document.getElementById("video-baslik").textContent = d.video.title;
+  document.getElementById("video-alt").textContent = d.video.desc;
+
+  // Özellikler bölümü
+  document.getElementById("ozellikler-baslik").textContent = d.features.title;
+  document.getElementById("ozellikler-alt").textContent = d.features.desc;
+  const ozelliklerIzgara = document.getElementById("ozellikler-izgara");
+  ozelliklerIzgara.innerHTML = d.features.items.map(item => `
+    <div class="oz${item.y ? ' y' : ''}">
+      <div class="s">${item.s}</div>
+      <h3>${item.title}${item.yeni ? `<span class="yeni">${item.yeni}</span>` : ''}</h3>
+      <p>${item.desc}</p>
+    </div>
+  `).join('');
+
+  // Konudan video adımları
+  document.getElementById("konudan-baslik").textContent = d.topic.title;
+  document.getElementById("konudan-alt").textContent = d.topic.desc;
+  const konudanAdimlar = document.getElementById("konudan-adimlar");
+  konudanAdimlar.innerHTML = d.topic.steps.map(s => `
+    <div class="adim">
+      <div class="no">${s.no}</div>
+      <div><b>${s.title}</b><span>${s.desc}</span></div>
+    </div>
+  `).join('');
+
+  // Ekran görüntüleri sekme menüsü
+  document.getElementById("ekranlar-baslik").textContent = d.screens.title;
+  document.getElementById("ekranlar-alt").textContent = d.screens.desc;
+  guncelleEkranSekmeleri(d.screens.tabs);
+
+  // İndirme alanı (OKSUZ, doğrudan temiz buton metni)
+  document.getElementById("indir-baslik").textContent = d.download.title;
+  document.getElementById("btn-alt-indir").innerHTML = `${d.download.btn_text} <small>${d.download.btn_sub}</small>`;
+  const indirAdimlar = document.getElementById("indir-adimlar");
+  indirAdimlar.innerHTML = d.download.steps.map(step => `<li>${step}</li>`).join('');
+
+  // SSS Akordiyonu
+  document.getElementById("sss-baslik").textContent = d.faq.title;
+  const sssKutu = document.getElementById("sss-kutu");
+  sssKutu.innerHTML = d.faq.items.map(item => `
+    <details>
+      <summary>${item.q}</summary>
+      <p>${item.a}</p>
+    </details>
+  `).join('');
+
+  // Altbilgi
+  document.getElementById("footer-telif").textContent = d.footer.copy;
+
+  // Dil menüsündeki aktif seçeneği güncelle
+  document.querySelectorAll(".dil-secenek").forEach(b => {
+    b.classList.toggle("aktif", b.getAttribute("data-kod") === kod);
+  });
+
+  // Seçimi yerel hafızaya kaydet
+  try {
+    localStorage.setItem("tulpar_secili_dil", kod);
+  } catch(e) {}
+}
+
+function guncelleEkranSekmeleri(tabs) {
+  const sekmeler = document.getElementById("sekmeler");
+  const ekranImg = document.getElementById("ekran");
+  const ekranYazi = document.getElementById("ekran-yazi");
+  sekmeler.innerHTML = "";
+
+  if (seciliSekmeIdx >= tabs.length) seciliSekmeIdx = 0;
+
+  tabs.forEach((tab, i) => {
+    const btn = document.createElement("button");
+    btn.className = "sekme" + (i === seciliSekmeIdx ? " acik" : "");
+    btn.textContent = tab.name;
+    btn.onclick = () => {
+      seciliSekmeIdx = i;
+      document.querySelectorAll(".sekme").forEach(x => x.classList.remove("acik"));
+      btn.classList.add("acik");
+      ekranImg.src = "gorseller/" + tab.img + ".jpg";
+      ekranImg.alt = tab.name;
+      ekranYazi.textContent = tab.desc;
+    };
+    sekmeler.appendChild(btn);
+  });
+
+  const aktif = tabs[seciliSekmeIdx];
+  ekranImg.src = "gorseller/" + aktif.img + ".jpg";
+  ekranImg.alt = aktif.name;
+  ekranYazi.textContent = aktif.desc;
+}
+
+// Dil seçici açılır menüsünü oluştur
+function olusturDilMenusu() {
+  const menu = document.getElementById("dil-menu");
+  menu.innerHTML = "";
+  Object.keys(TULPAR_LANGUAGES).forEach(kod => {
+    const d = TULPAR_LANGUAGES[kod];
+    const btn = document.createElement("button");
+    btn.className = "dil-secenek" + (kod === suankiDil ? " aktif" : "");
+    btn.setAttribute("data-kod", kod);
+    btn.setAttribute("type", "button");
+    btn.innerHTML = `<span class="bayrak">${d.flag}</span> <span>${d.name}</span>`;
+    btn.onclick = (e) => {
+      e.stopPropagation();
+      diliAyarla(kod);
+      menu.classList.remove("acik");
+      document.getElementById("dil-kutu").classList.remove("acik");
+    };
+    menu.appendChild(btn);
+  });
+
+  const dilKutu = document.getElementById("dil-kutu");
+  const dilBtn = document.getElementById("dil-btn");
+
+  dilBtn.onclick = (e) => {
+    e.stopPropagation();
+    const acik = menu.classList.toggle("acik");
+    dilKutu.classList.toggle("acik", acik);
+  };
+
+  document.addEventListener("click", (e) => {
+    if (!dilKutu.contains(e.target)) {
+      menu.classList.remove("acik");
+      dilKutu.classList.remove("acik");
+    }
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      menu.classList.remove("acik");
+      dilKutu.classList.remove("acik");
+    }
+  });
+}
+
+// İlk açılışta dili tespit et
+function tespitEtVeBaslat() {
+  olusturDilMenusu();
+
+  let baslangicDili = 'en'; // Listemizde olmayan diller için varsayılan HER ZAMAN İngilizce ('en')
+
+  // 1. URL parametresinde açıkça belirtilmiş mi? (örn: ?lang=tr veya ?lang=ru)
+  const urlParam = new URLSearchParams(window.location.search).get("lang");
+  if (urlParam && TULPAR_LANGUAGES[urlParam]) {
+    baslangicDili = urlParam;
+  } else {
+    try {
+      // 2. Kullanıcı daha önce menüden elle bir dil seçtiyse onu hatırla
+      const kayitli = localStorage.getItem("tulpar_secili_dil");
+      if (kayitli && TULPAR_LANGUAGES[kayitli]) {
+        baslangicDili = kayitli;
+      } else {
+        // 3. Kullanıcının bilgisayar / tarayıcı dillerini kontrol et (navigator.languages öncelik sırası)
+        const diller = navigator.languages && navigator.languages.length 
+          ? navigator.languages 
+          : [navigator.language || navigator.userLanguage || ''];
+
+        let eslesen = null;
+        for (const dil of diller) {
+          if (!dil) continue;
+          // Örn: "tr-TR" -> "tr", "ru-RU" -> "ru", "zh-CN" -> "zh", "de-DE" -> "de"
+          const kisaKod = dil.toLowerCase().split('-')[0].trim();
+          if (TULPAR_LANGUAGES[kisaKod]) {
+            eslesen = kisaKod;
+            break;
+          }
+        }
+
+        // Desteklenen bir dil bulunduysa onu aç; yoksa (Fransızca, Japonca, İtalyanca vb.) varsayılan İngilizce ('en')
+        baslangicDili = eslesen || 'en';
+      }
+    } catch(e) {
+      baslangicDili = 'en';
+    }
+  }
+
+  diliAyarla(baslangicDili);
+
+  // Kaydırınca animasyonla belirme (Intersection Observer)
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add("gor");
+      io.unobserve(e.target);
+    }
+  }), { threshold: .12 });
+  document.querySelectorAll(".belir").forEach(e => io.observe(e));
+}
+
+window.addEventListener("DOMContentLoaded", tespitEtVeBaslat);
+</script>
+</body>
+</html>
